@@ -30,6 +30,8 @@ import java.io.UncheckedIOException;
 import static es.saulvargas.recsys2015.Conventions.getCodec;
 import static es.saulvargas.recsys2015.Conventions.getFixedLength;
 import static es.saulvargas.recsys2015.Conventions.getPath;
+import static es.saulvargas.recsys2015.Utils.saveBinaryData;
+import static es.saulvargas.recsys2015.Utils.saveRatingData;
 import static es.uam.eps.ir.ranksys.core.util.parsing.DoubleParser.ddp;
 import es.uam.eps.ir.ranksys.fast.preference.SimpleFastPreferenceData;
 import java.io.File;
@@ -88,7 +90,7 @@ public class Generate {
                 switch (dataset) {
                     case "msd":
                         if (!new File(uDataPath).exists() || !new File(iDataPath).exists()) {
-                            BinaryCODECPreferenceData.save(SimpleFastPreferenceData.load(dataPath, up, ip, x -> 1.0, users, items), uDataPath, iDataPath);
+                            saveBinaryData(SimpleFastPreferenceData.load(dataPath, up, ip, x -> 1.0, users, items), uDataPath, iDataPath);
                         }
                         return BinaryCODECPreferenceData.load(uDataPath, iDataPath, users, items, cds[0], cds[1]);
                     case "ml1M":
@@ -97,7 +99,7 @@ public class Generate {
                     case "ymusic":
                     default:
                         if (!new File(uDataPath).exists() || !new File(iDataPath).exists()) {
-                            RatingCODECPreferenceData.save(SimpleFastPreferenceData.load(dataPath, up, ip, ddp, users, items), uDataPath, iDataPath);
+                            saveRatingData(SimpleFastPreferenceData.load(dataPath, up, ip, ddp, users, items), uDataPath, iDataPath);
                         }
                         return RatingCODECPreferenceData.load(uDataPath, iDataPath, users, items, cds[0], cds[1], cds[2]);
                 }
