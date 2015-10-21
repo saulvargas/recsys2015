@@ -27,9 +27,9 @@ import es.uam.eps.ir.ranksys.fast.index.SimpleFastUserIndex;
 import es.uam.eps.ir.ranksys.fast.preference.FastPreferenceData;
 import java.io.IOException;
 import static java.lang.Integer.parseInt;
+import org.ranksys.compression.codecs.dsi.EliasFanoBitStreamCODEC;
 import org.ranksys.compression.codecs.dsi.FixedLengthBitStreamCODEC;
 import org.ranksys.compression.codecs.dsi.GammaBitStreamCODEC;
-import org.ranksys.compression.codecs.dsi.IntegratedEliasFanoBitStreamCODEC;
 import org.ranksys.compression.codecs.dsi.RiceBitStreamCODEC;
 import org.ranksys.compression.codecs.dsi.ZetaBitStreamCODEC;
 import org.ranksys.compression.codecs.lemire.FORVBCODEC;
@@ -169,8 +169,8 @@ public class Conventions {
                 return new NewPFDVBCODEC();
             case "fastpfor":
                 return new FastPFORVBCODEC();
-            case "succint":
-                return new IntegratedEliasFanoBitStreamCODEC();
+            case "ief":
+                return new EliasFanoBitStreamCODEC();
             case "fixed":
                 return new FixedLengthBitStreamCODEC(fixedLength);
             case "gvbyte":
