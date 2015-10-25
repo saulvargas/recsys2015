@@ -2,6 +2,12 @@
 
 main="-jar target/recsys2015-1.0.jar Benchmark"
 
+#datasets=("netflix"  "ymusic"  )
+#funs=(    "urv_1000" "urv_1000")
+#ns=(      4          4         )
+#seeds=(   28351      27951     )
+#Xmxs=("800M 2400M 4800M" "6G 16G 32G")
+
 datasets=("ml1M")
 funs=("urv_1000")
 ns=(4)

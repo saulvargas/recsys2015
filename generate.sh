@@ -4,6 +4,8 @@ m=2G
 params="-Xmx${m}"
 main="-jar target/recsys2015-1.0.jar Generate"
 
+#datasets=("netflix" "ymusic")
+
 datasets=("ml1M")
 
 for (( i=0; i<${#datasets[@]}; i++ ))
