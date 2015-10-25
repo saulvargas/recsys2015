@@ -11,7 +11,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <ranksys.version>0.4-SNAPSHOT</ranksys.version>
+        <ranksys.version>0.4</ranksys.version>
     </properties>
     
     <repositories>
@@ -22,11 +22,6 @@
     </repositories>
     
     <dependencies>
-        <dependency>
-            <groupId>it.unimi.dsi</groupId>
-            <artifactId>fastutil</artifactId>
-            <version>6.6.3</version>
-        </dependency>
         <dependency>
             <groupId>org.ranksys</groupId>
             <artifactId>RankSys-core</artifactId>
@@ -46,6 +41,11 @@
             <groupId>org.ranksys</groupId>
             <artifactId>RankSys-compression</artifactId>
             <version>${ranksys.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>it.unimi.dsi</groupId>
+            <artifactId>fastutil</artifactId>
+            <version>7.0.6</version>
         </dependency>
     </dependencies>
     
