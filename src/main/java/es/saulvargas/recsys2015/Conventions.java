@@ -83,6 +83,7 @@ public class Conventions {
             case "msd":
                 vFixedLength = 1;
                 break;
+            case "ml10M":
             case "ml20M":
                 vFixedLength = 4;
                 break;

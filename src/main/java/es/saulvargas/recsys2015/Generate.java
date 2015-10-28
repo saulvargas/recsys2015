@@ -64,6 +64,7 @@ public class Generate {
 
         switch (dataset) {
             case "ml1M":
+            case "ml10M":
             case "ml20M":
             case "netflix":
             case "ymusic":
@@ -94,6 +95,7 @@ public class Generate {
                         }
                         return BinaryCODECPreferenceData.load(uDataPath, iDataPath, users, items, cds[0], cds[1]);
                     case "ml1M":
+                    case "ml10M":
                     case "ml20M":
                     case "netflix":
                     case "ymusic":

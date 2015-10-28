@@ -71,6 +71,7 @@ public class Benchmark {
 
         switch (dataset) {
             case "ml1M":
+            case "ml10M":
             case "ml20M":
             case "netflix":
             case "ymusic":
