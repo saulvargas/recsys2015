@@ -137,7 +137,7 @@ public class Conventions {
      * @return codec
      */
     public static CODEC<?> getCodec(String name, int fixedLength) {
-        int k = 3;
+        int k = -1;
         if (name.contains("_")) {
             String[] tokens = name.split("_");
             name = tokens[0];
@@ -150,7 +150,7 @@ public class Conventions {
             case "gamma":
                 return new GammaBitStreamCODEC();
             case "zeta":
-                return new ZetaBitStreamCODEC(k);
+                return new ZetaBitStreamCODEC(k < 0 ? 3 : k);
             case "rice":
                 return new RiceBitStreamCODEC();
             case "vbyte":
@@ -172,7 +172,7 @@ public class Conventions {
             case "ief":
                 return new EliasFanoBitStreamCODEC();
             case "fixed":
-                return new FixedLengthBitStreamCODEC(fixedLength);
+                return new FixedLengthBitStreamCODEC(k < 0 ? fixedLength : k);
             case "gvbyte":
                 return new GroupVByteCODEC();
             default:
