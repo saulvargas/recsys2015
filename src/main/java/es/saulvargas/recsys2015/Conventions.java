@@ -60,7 +60,7 @@ public class Conventions {
      * @return path of the preference data serialized file
      */
     public static String getPath(String path, String dataset, String idxCodec, String vCodec) {
-        return path + "/preference-data/" + idxCodec + "-" + vCodec + ".obj";
+        return path + "/preference-data/" + idxCodec + "-" + vCodec + ".obj.gz";
     }
 
     /**
