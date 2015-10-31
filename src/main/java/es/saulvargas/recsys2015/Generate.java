@@ -125,11 +125,7 @@ public class Generate {
         System.out.println(fields + "\tis\t" + cd_iidxs.stats()[1]);
         System.out.println(fields + "\tvs\t" + cd_vs.stats()[1]);
 
-        if (preferences instanceof RatingCODECPreferenceData) {
-            ((RatingCODECPreferenceData) preferences).serialize(getPath(path, dataset, idxCodec, vCodec));
-        } else {
-            ((BinaryCODECPreferenceData) preferences).serialize(getPath(path, dataset, idxCodec, vCodec));
-        }
+        Utils.serialize(preferences, getPath(path, dataset, idxCodec, vCodec));
     }
 
 }

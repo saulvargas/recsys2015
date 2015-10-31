@@ -16,6 +16,7 @@
  */
 package es.saulvargas.recsys2015;
 
+import static es.saulvargas.recsys2015.Conventions.getPath;
 import es.uam.eps.ir.ranksys.core.util.parsing.Parser;
 import static es.uam.eps.ir.ranksys.core.util.parsing.Parsers.ip;
 import static es.uam.eps.ir.ranksys.core.util.parsing.Parsers.sp;
@@ -40,7 +41,6 @@ import java.util.Random;
 import java.util.function.Consumer;
 import java.util.stream.IntStream;
 import static java.util.stream.DoubleStream.of;
-import static es.saulvargas.recsys2015.Conventions.deserialize;
 
 /**
  * Program that loads a compressed preference data and evaluates by
@@ -87,7 +87,7 @@ public class Benchmark {
     public static <U, I> void test(String path, String dataset, String idxCodec, String vCodec, int n, String funName, long seed, Parser<U> up, Parser<I> ip) throws Exception {
 
         long time0 = System.nanoTime();
-        FastPreferenceData<U, I> preferences = deserialize(path, dataset, idxCodec, vCodec);
+        FastPreferenceData<U, I> preferences = Utils.deserialize(getPath(path, dataset, idxCodec, vCodec));
         double loadingTime = (System.nanoTime() - time0) / 1_000_000_000.0;
         System.err.println("loaded " + dataset + " with " + idxCodec + "+" + vCodec + ": " + loadingTime);
 

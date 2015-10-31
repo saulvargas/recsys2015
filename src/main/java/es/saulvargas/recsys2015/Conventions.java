@@ -24,7 +24,6 @@ import es.uam.eps.ir.ranksys.fast.index.FastItemIndex;
 import es.uam.eps.ir.ranksys.fast.index.FastUserIndex;
 import es.uam.eps.ir.ranksys.fast.index.SimpleFastItemIndex;
 import es.uam.eps.ir.ranksys.fast.index.SimpleFastUserIndex;
-import es.uam.eps.ir.ranksys.fast.preference.FastPreferenceData;
 import java.io.IOException;
 import static java.lang.Integer.parseInt;
 import org.ranksys.compression.codecs.dsi.EliasFanoBitStreamCODEC;
@@ -40,8 +39,6 @@ import org.ranksys.compression.codecs.lemire.NewPFDVBCODEC;
 import org.ranksys.compression.codecs.lemire.OptPFDVBCODEC;
 import org.ranksys.compression.codecs.lemire.Simple16CODEC;
 import org.ranksys.compression.codecs.lemire.VByteCODEC;
-import org.ranksys.compression.preferences.BinaryCODECPreferenceData;
-import org.ranksys.compression.preferences.RatingCODECPreferenceData;
 
 /**
  * Common conventions for the test programs.
@@ -64,8 +61,7 @@ public class Conventions {
     }
 
     /**
-     * Get the bits required for identifiers and ratings for identifiers
-     * and ratings.
+     * Get the bits required for identifiers and ratings for identifiers and ratings.
      *
      * @param path base path
      * @param dataset name of dataset
@@ -97,37 +93,6 @@ public class Conventions {
         }
 
         return new int[]{uFixedLength, iFixedLength, vFixedLength};
-    }
-
-    /**
-     * De-serialize preference data object.
-     *
-     * @param <U> type of user
-     * @param <I> type of item
-     * @param path path to file
-     * @param dataset name of dataset
-     * @param idxCodec codec of identifiers
-     * @param vCodec codec of ratings
-     * @return preference data from file
-     * @throws IOException when IO error
-     * @throws ClassNotFoundException when reading bad file
-     */
-    public static <U, I> FastPreferenceData<U, I> deserialize(String path, String dataset, String idxCodec, String vCodec) throws IOException, ClassNotFoundException {
-        int[] lens = getFixedLength(path, dataset);
-        String dataPath = getPath(path, dataset, idxCodec, vCodec);
-        CODEC<?> u_codec = getCodec(idxCodec, lens[0]);
-        CODEC<?> i_codec = getCodec(idxCodec, lens[1]);
-        CODEC<?> v_codec = getCodec(vCodec, lens[2]);
-        switch (dataset) {
-            case "msd":
-                return BinaryCODECPreferenceData.deserialize(dataPath, u_codec, i_codec);
-            case "ml1M":
-            case "ml20M":
-            case "netflix":
-            case "ymusic":
-            default:
-                return RatingCODECPreferenceData.deserialize(dataPath, u_codec, i_codec, v_codec);
-        }
     }
 
     /**
