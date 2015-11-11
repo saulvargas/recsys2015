@@ -23,22 +23,22 @@
     
     <dependencies>
         <dependency>
-            <groupId>org.ranksys</groupId>
+            <groupId>org.ranksys.RankSys</groupId>
             <artifactId>RankSys-core</artifactId>
             <version>${ranksys.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.ranksys</groupId>
+            <groupId>org.ranksys.RankSys</groupId>
             <artifactId>RankSys-fast</artifactId>
             <version>${ranksys.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.ranksys</groupId>
+            <groupId>org.ranksys.RankSys</groupId>
             <artifactId>RankSys-nn</artifactId>
             <version>${ranksys.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.ranksys</groupId>
+            <groupId>org.ranksys.RankSys</groupId>
             <artifactId>RankSys-compression</artifactId>
             <version>${ranksys.version}</version>
         </dependency>

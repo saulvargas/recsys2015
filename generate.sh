@@ -15,7 +15,7 @@ do
     # no compression
     java $params $main $path $dataset "null" "null"
     # codecs
-    for idxCodec in "fixed" "gamma" "rice" "ifor" "zeta_3" "ief" "gvbyte" "ivbyte"
+    for idxCodec in "fixed" "gamma" "rice" "ifor" "zeta_3" "ief" "ivbyte"
     do
         java $params $main $path $dataset $idxCodec "fixed"
     done

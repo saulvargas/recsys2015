@@ -18,7 +18,7 @@ package es.saulvargas.recsys2015;
 
 import org.ranksys.compression.codecs.CODEC;
 import org.ranksys.compression.codecs.NullCODEC;
-import org.ranksys.compression.codecs.catena.GroupVByteCODEC;
+//import org.ranksys.compression.codecs.catena.GroupVByteCODEC;
 import static es.uam.eps.ir.ranksys.core.util.parsing.Parsers.sp;
 import es.uam.eps.ir.ranksys.fast.index.FastItemIndex;
 import es.uam.eps.ir.ranksys.fast.index.FastUserIndex;
@@ -148,8 +148,8 @@ public class Conventions {
                 return new EliasFanoBitStreamCODEC();
             case "fixed":
                 return new FixedLengthBitStreamCODEC(k < 0 ? fixedLength : k);
-            case "gvbyte":
-                return new GroupVByteCODEC();
+//            case "gvbyte":
+//                return new GroupVByteCODEC();
             default:
                 System.err.println("I don't know what " + name + " is :-(");
                 System.exit(-1);

@@ -31,7 +31,7 @@ do
         # no compression
         paste <(yes $p | head -n $n2) <(yes $m | head -n $n2) <(java $params $main $path $dataset null null $n $fun $seed)
         # codecs
-        for idxCodec in "fixed" "gamma" "rice" "ifor" "zeta_3" "ief" "gvbyte" "ivbyte"
+        for idxCodec in "fixed" "gamma" "rice" "ifor" "zeta_3" "ief" "ivbyte"
         do
             paste <(yes $p | head -n $n2) <(yes $m | head -n $n2) <(java $params $main $path $dataset $idxCodec fixed $n $fun $seed)
         done
