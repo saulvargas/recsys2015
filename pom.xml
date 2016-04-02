@@ -11,7 +11,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <ranksys.version>0.4</ranksys.version>
+        <ranksys.version>no-files-SNAPSHOT</ranksys.version>
     </properties>
     
     <repositories>
@@ -23,22 +23,22 @@
     
     <dependencies>
         <dependency>
-            <groupId>org.ranksys.RankSys</groupId>
+            <groupId>org.ranksys</groupId>
             <artifactId>RankSys-core</artifactId>
             <version>${ranksys.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.ranksys.RankSys</groupId>
+            <groupId>org.ranksys</groupId>
             <artifactId>RankSys-fast</artifactId>
             <version>${ranksys.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.ranksys.RankSys</groupId>
+            <groupId>org.ranksys</groupId>
             <artifactId>RankSys-nn</artifactId>
             <version>${ranksys.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.ranksys.RankSys</groupId>
+            <groupId>org.ranksys</groupId>
             <artifactId>RankSys-compression</artifactId>
             <version>${ranksys.version}</version>
         </dependency>

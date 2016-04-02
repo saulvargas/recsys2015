@@ -17,9 +17,6 @@
 package es.saulvargas.recsys2015;
 
 import static es.saulvargas.recsys2015.Conventions.getPath;
-import es.uam.eps.ir.ranksys.core.util.parsing.Parser;
-import static es.uam.eps.ir.ranksys.core.util.parsing.Parsers.ip;
-import static es.uam.eps.ir.ranksys.core.util.parsing.Parsers.sp;
 import es.uam.eps.ir.ranksys.fast.preference.FastPreferenceData;
 import es.uam.eps.ir.ranksys.nn.item.ItemNeighborhoodRecommender;
 import es.uam.eps.ir.ranksys.nn.item.neighborhood.CachedItemNeighborhood;
@@ -43,8 +40,7 @@ import java.util.stream.IntStream;
 import static java.util.stream.DoubleStream.of;
 
 /**
- * Program that loads a compressed preference data and evaluates by
- * running a user or item-based knn algorithm.
+ * Program that loads a compressed preference data and evaluates by running a user or item-based knn algorithm.
  * <br>
  * If you use this code, please cite the following papers:
  * <ul>
@@ -78,22 +74,10 @@ public class Benchmark {
             return;
         }
 
-        switch (dataset) {
-            case "ml1M":
-            case "ml10M":
-            case "ml20M":
-            case "netflix":
-            case "ymusic":
-                test(path, dataset, idxCodec, vCodec, n, funName, seed, ip, ip);
-                break;
-            case "msd":
-            default:
-                test(path, dataset, idxCodec, vCodec, n, funName, seed, sp, sp);
-                break;
-        }
+        test(path, dataset, idxCodec, vCodec, n, funName, seed);
     }
 
-    public static <U, I> void test(String path, String dataset, String idxCodec, String vCodec, int n, String funName, long seed, Parser<U> up, Parser<I> ip) throws Exception {
+    public static <U, I> void test(String path, String dataset, String idxCodec, String vCodec, int n, String funName, long seed) throws Exception {
 
         long time0 = System.nanoTime();
         FastPreferenceData<U, I> preferences = Utils.deserialize(getPath(path, dataset, idxCodec, vCodec));

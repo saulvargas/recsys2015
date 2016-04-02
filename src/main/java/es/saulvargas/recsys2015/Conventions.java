@@ -16,6 +16,8 @@
  */
 package es.saulvargas.recsys2015;
 
+import static es.saulvargas.recsys2015.Utils.getItemIndex;
+import static es.saulvargas.recsys2015.Utils.getUserIndex;
 import org.ranksys.compression.codecs.CODEC;
 import org.ranksys.compression.codecs.NullCODEC;
 //import org.ranksys.compression.codecs.catena.GroupVByteCODEC;
@@ -78,8 +80,8 @@ public class Conventions {
      * @throws IOException when IO error
      */
     public static int[] getFixedLength(String path, String dataset) throws IOException {
-        FastUserIndex<String> users = SimpleFastUserIndex.load(path + "/users.txt", sp);
-        FastItemIndex<String> items = SimpleFastItemIndex.load(path + "/items.txt", sp);
+        FastUserIndex<String> users = getUserIndex(path, sp);
+        FastItemIndex<String> items = getItemIndex(path, sp);
 
         int uFixedLength = 32 - Integer.numberOfLeadingZeros(users.numUsers() - 1);
         int iFixedLength = 32 - Integer.numberOfLeadingZeros(items.numItems() - 1);
