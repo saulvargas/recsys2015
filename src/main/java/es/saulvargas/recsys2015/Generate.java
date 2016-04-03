@@ -17,36 +17,36 @@
 package es.saulvargas.recsys2015;
 
 import org.ranksys.compression.codecs.CODEC;
-import es.uam.eps.ir.ranksys.core.util.parsing.Parser;
-import static es.uam.eps.ir.ranksys.core.util.parsing.Parsers.ip;
-import static es.uam.eps.ir.ranksys.core.util.parsing.Parsers.sp;
 import es.uam.eps.ir.ranksys.fast.preference.FastPreferenceData;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import static es.saulvargas.recsys2015.Conventions.getCodec;
 import static es.saulvargas.recsys2015.Conventions.getFixedLength;
 import static es.saulvargas.recsys2015.Conventions.getPath;
-import static es.saulvargas.recsys2015.Utils.getBinaryData;
-import static es.saulvargas.recsys2015.Utils.getItemIndex;
-import static es.saulvargas.recsys2015.Utils.getRatingData;
-import static es.saulvargas.recsys2015.Utils.getUserIndex;
 import static es.saulvargas.recsys2015.Utils.saveBinaryData;
 import static es.saulvargas.recsys2015.Utils.saveRatingData;
-import static es.uam.eps.ir.ranksys.core.util.parsing.DoubleParser.ddp;
-import static es.uam.eps.ir.ranksys.core.util.parsing.IntParser.dip;
 import es.uam.eps.ir.ranksys.fast.IdxObject;
 import es.uam.eps.ir.ranksys.fast.index.FastItemIndex;
 import es.uam.eps.ir.ranksys.fast.index.FastUserIndex;
+import es.uam.eps.ir.ranksys.fast.index.SimpleFastItemIndex;
+import es.uam.eps.ir.ranksys.fast.index.SimpleFastUserIndex;
 import es.uam.eps.ir.ranksys.fast.preference.SimpleFastPreferenceData;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import static java.lang.Integer.parseInt;
 import org.ranksys.compression.preferences.BinaryCODECPreferenceData;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import org.ranksys.compression.preferences.RatingCODECPreferenceData;
+import org.ranksys.formats.index.ItemsReader;
+import org.ranksys.formats.index.UsersReader;
+import org.ranksys.formats.parsing.Parser;
+import static org.ranksys.formats.parsing.Parsers.ip;
+import static org.ranksys.formats.parsing.Parsers.sp;
+import org.ranksys.formats.preference.PreferencesReader;
 
 /**
  * Program to create compressed preference data and save to compressed binary file.
@@ -97,8 +97,8 @@ public class Generate {
 
     private static <U, I> void store(String path, String dataset, String idxCodec, String vCodec, Parser<U> up, Parser<I> ip) throws IOException {
 
-        FastUserIndex<U> users = getUserIndex(path, up);
-        FastItemIndex<I> items = getItemIndex(path, ip);
+        FastUserIndex<U> users = SimpleFastUserIndex.load(UsersReader.read(path + "/users.txt", up));
+        FastItemIndex<I> items = SimpleFastItemIndex.load(ItemsReader.read(path + "/items.txt", ip));
 
         String dataPath = path + "/ratings.data";
         String uDataPath = path + "/ratings.u";
@@ -109,17 +109,18 @@ public class Generate {
                 switch (dataset) {
                     case "msd":
                         if (!new File(uDataPath).exists() || !new File(iDataPath).exists()) {
-                            saveBinaryData(getBinaryData(path, up, ip, users, items), uDataPath, iDataPath);
+                            SimpleFastPreferenceData<U, I> data = SimpleFastPreferenceData.load(PreferencesReader.readBinary(dataPath, up, ip), users, items);
+                            saveBinaryData(data, uDataPath, iDataPath);
                         }
 
                         Function<InputStream, Stream<IdxObject<int[]>>> binaryReader = is -> {
                             return new BufferedReader(new InputStreamReader(is)).lines().map(line -> {
                                 String[] tokens = line.split("\t");
                                 int len = tokens.length - 1;
-                                int k = dip.parse(tokens[0]);
+                                int k = parseInt(tokens[0]);
                                 int[] idxs = new int[len];
                                 for (int i = 0; i < len; i++) {
-                                    idxs[i] = dip.parse(tokens[i + 1]);
+                                    idxs[i] = parseInt(tokens[i + 1]);
                                 }
                                 return new IdxObject<>(k, idxs);
                             });
@@ -136,19 +137,20 @@ public class Generate {
                     case "ymusic":
                     default:
                         if (!new File(uDataPath).exists() || !new File(iDataPath).exists()) {
-                            saveRatingData(getRatingData(path, up, ip, users, items), uDataPath, iDataPath);
+                            SimpleFastPreferenceData<U, I> data = SimpleFastPreferenceData.load(PreferencesReader.readBinary(dataPath, up, ip), users, items);
+                            saveRatingData(data, uDataPath, iDataPath);
                         }
 
                         Function<InputStream, Stream<IdxObject<int[][]>>> ratingReader = is -> {
                             return new BufferedReader(new InputStreamReader(is)).lines().map(line -> {
                                 String[] tokens = line.split("\t");
                                 int len = tokens.length / 2;
-                                int k = dip.parse(tokens[0]);
+                                int k = parseInt(tokens[0]);
                                 int[] idxs = new int[len];
                                 int[] vs = new int[len];
                                 for (int i = 0; i < len; i++) {
-                                    idxs[i] = dip.parse(tokens[2 * i + 1]);
-                                    vs[i] = dip.parse(tokens[2 * i + 2]);
+                                    idxs[i] = parseInt(tokens[2 * i + 1]);
+                                    vs[i] = parseInt(tokens[2 * i + 2]);
                                 }
                                 return new IdxObject<>(k, new int[][]{idxs, vs});
                             });

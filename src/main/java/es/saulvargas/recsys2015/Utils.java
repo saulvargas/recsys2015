@@ -1,14 +1,6 @@
 package es.saulvargas.recsys2015;
 
-import es.uam.eps.ir.ranksys.core.preference.SimplePreferenceData.PreferenceDataTuple;
-import static es.uam.eps.ir.ranksys.core.util.FastStringSplitter.split;
-import es.uam.eps.ir.ranksys.core.util.parsing.Parser;
-import es.uam.eps.ir.ranksys.fast.index.FastItemIndex;
-import es.uam.eps.ir.ranksys.fast.index.FastUserIndex;
-import es.uam.eps.ir.ranksys.fast.index.SimpleFastItemIndex;
-import es.uam.eps.ir.ranksys.fast.index.SimpleFastUserIndex;
 import es.uam.eps.ir.ranksys.fast.preference.FastPreferenceData;
-import es.uam.eps.ir.ranksys.fast.preference.SimpleFastPreferenceData;
 import es.uam.eps.ir.ranksys.fast.preference.TransposedPreferenceData;
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
@@ -21,10 +13,6 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UncheckedIOException;
-import static java.lang.Double.parseDouble;
-import static java.lang.Long.parseLong;
-import static java.nio.file.Files.lines;
-import java.nio.file.Paths;
 import java.util.function.BiConsumer;
 import static java.util.stream.Collectors.joining;
 import java.util.zip.GZIPInputStream;
@@ -46,42 +34,28 @@ import java.util.zip.GZIPOutputStream;
  */
 public class Utils {
 
-    public static <U> FastUserIndex<U> getUserIndex(String path, Parser<U> up) throws IOException {
-        return SimpleFastUserIndex.load(lines(Paths.get(path, "users.txt"))
-                .map(line -> split(line, '\t', 2)[0])
-                .map(up::parse)
-                .sorted());
-    }
-
-    public static <I> FastItemIndex<I> getItemIndex(String path, Parser<I> ip) throws IOException {
-        return SimpleFastItemIndex.load(lines(Paths.get(path, "items.txt"))
-                .map(line -> split(line, '\t', 2)[0])
-                .map(ip::parse)
-                .sorted());
-    }
-
-    public static <U, I> FastPreferenceData<U, I> getBinaryData(String path, Parser<U> up, Parser<I> ip, FastUserIndex<U> uIndex, FastItemIndex<I> iIndex) throws IOException {
-        return SimpleFastPreferenceData.load(lines(Paths.get(path, "ratings.data"))
-                .map(line -> {
-                    CharSequence[] tokens = split(line, '\t', 3);
-                    U user = up.parse(tokens[0]);
-                    I item = ip.parse(tokens[1]);
-
-                    return new PreferenceDataTuple<>(user, item, 1.0);
-                }), uIndex, iIndex);
-    }
-
-    public static <U, I> FastPreferenceData<U, I> getRatingData(String path, Parser<U> up, Parser<I> ip, FastUserIndex<U> uIndex, FastItemIndex<I> iIndex) throws IOException {
-        return SimpleFastPreferenceData.load(lines(Paths.get(path, "ratings.data"))
-                .map(line -> {
-                    CharSequence[] tokens = split(line, '\t', 4);
-                    U user = up.parse(tokens[0]);
-                    I item = ip.parse(tokens[1]);
-                    double value = parseDouble(tokens[2].toString());
-
-                    return new PreferenceDataTuple<>(user, item, value);
-                }), uIndex, iIndex);
-    }
+//    public static <U, I> FastPreferenceData<U, I> getBinaryData(String path, Parser<U> up, Parser<I> ip, FastUserIndex<U> uIndex, FastItemIndex<I> iIndex) throws IOException {
+//        return SimpleFastPreferenceData.load(lines(Paths.get(path, "ratings.data"))
+//                .map(line -> {
+//                    CharSequence[] tokens = split(line, '\t', 3);
+//                    U user = up.parse(tokens[0]);
+//                    I item = ip.parse(tokens[1]);
+//
+//                    return new PreferenceDataTuple<>(user, item, 1.0);
+//                }), uIndex, iIndex);
+//    }
+//
+//    public static <U, I> FastPreferenceData<U, I> getRatingData(String path, Parser<U> up, Parser<I> ip, FastUserIndex<U> uIndex, FastItemIndex<I> iIndex) throws IOException {
+//        return SimpleFastPreferenceData.load(lines(Paths.get(path, "ratings.data"))
+//                .map(line -> {
+//                    CharSequence[] tokens = split(line, '\t', 4);
+//                    U user = up.parse(tokens[0]);
+//                    I item = ip.parse(tokens[1]);
+//                    double value = parseDouble(tokens[2].toString());
+//
+//                    return new PreferenceDataTuple<>(user, item, value);
+//                }), uIndex, iIndex);
+//    }
 
     /**
      * Serialize object.

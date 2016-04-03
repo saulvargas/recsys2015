@@ -16,12 +16,9 @@
  */
 package es.saulvargas.recsys2015;
 
-import static es.saulvargas.recsys2015.Utils.getItemIndex;
-import static es.saulvargas.recsys2015.Utils.getUserIndex;
 import org.ranksys.compression.codecs.CODEC;
 import org.ranksys.compression.codecs.NullCODEC;
 //import org.ranksys.compression.codecs.catena.GroupVByteCODEC;
-import static es.uam.eps.ir.ranksys.core.util.parsing.Parsers.sp;
 import es.uam.eps.ir.ranksys.fast.index.FastItemIndex;
 import es.uam.eps.ir.ranksys.fast.index.FastUserIndex;
 import es.uam.eps.ir.ranksys.fast.index.SimpleFastItemIndex;
@@ -41,6 +38,9 @@ import org.ranksys.compression.codecs.lemire.NewPFDVBCODEC;
 import org.ranksys.compression.codecs.lemire.OptPFDVBCODEC;
 import org.ranksys.compression.codecs.lemire.Simple16CODEC;
 import org.ranksys.compression.codecs.lemire.VByteCODEC;
+import org.ranksys.formats.index.ItemsReader;
+import org.ranksys.formats.index.UsersReader;
+import static org.ranksys.formats.parsing.Parsers.sp;
 
 /**
  * Common conventions for the test programs.
@@ -80,8 +80,8 @@ public class Conventions {
      * @throws IOException when IO error
      */
     public static int[] getFixedLength(String path, String dataset) throws IOException {
-        FastUserIndex<String> users = getUserIndex(path, sp);
-        FastItemIndex<String> items = getItemIndex(path, sp);
+        FastUserIndex<String> users = SimpleFastUserIndex.load(UsersReader.read(path + "/users.txt", sp));
+        FastItemIndex<String> items = SimpleFastItemIndex.load(ItemsReader.read(path + "/items.txt", sp));
 
         int uFixedLength = 32 - Integer.numberOfLeadingZeros(users.numUsers() - 1);
         int iFixedLength = 32 - Integer.numberOfLeadingZeros(items.numItems() - 1);
