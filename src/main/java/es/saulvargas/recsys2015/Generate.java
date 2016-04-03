@@ -46,7 +46,8 @@ import org.ranksys.formats.index.UsersReader;
 import org.ranksys.formats.parsing.Parser;
 import static org.ranksys.formats.parsing.Parsers.ip;
 import static org.ranksys.formats.parsing.Parsers.sp;
-import org.ranksys.formats.preference.PreferencesReader;
+import org.ranksys.formats.preference.SimpleBinaryPreferencesReader;
+import org.ranksys.formats.preference.SimpleRatingPreferencesReader;
 
 /**
  * Program to create compressed preference data and save to compressed binary file.
@@ -109,7 +110,7 @@ public class Generate {
                 switch (dataset) {
                     case "msd":
                         if (!new File(uDataPath).exists() || !new File(iDataPath).exists()) {
-                            SimpleFastPreferenceData<U, I> data = SimpleFastPreferenceData.load(PreferencesReader.readBinary(dataPath, up, ip), users, items);
+                            SimpleFastPreferenceData<U, I> data = SimpleFastPreferenceData.load(SimpleBinaryPreferencesReader.get().read(dataPath, up, ip), users, items);
                             saveBinaryData(data, uDataPath, iDataPath);
                         }
 
@@ -137,7 +138,7 @@ public class Generate {
                     case "ymusic":
                     default:
                         if (!new File(uDataPath).exists() || !new File(iDataPath).exists()) {
-                            SimpleFastPreferenceData<U, I> data = SimpleFastPreferenceData.load(PreferencesReader.readBinary(dataPath, up, ip), users, items);
+                            SimpleFastPreferenceData<U, I> data = SimpleFastPreferenceData.load(SimpleRatingPreferencesReader.get().read(dataPath, up, ip), users, items);
                             saveRatingData(data, uDataPath, iDataPath);
                         }
 
