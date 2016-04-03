@@ -1,23 +1,14 @@
 package es.saulvargas.recsys2015;
 
-import es.uam.eps.ir.ranksys.fast.preference.FastPreferenceData;
-import es.uam.eps.ir.ranksys.fast.preference.TransposedPreferenceData;
-import java.io.BufferedWriter;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import static java.util.Comparator.comparingInt;
-import java.util.function.BiConsumer;
-import static java.util.stream.Collectors.joining;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
-import org.jooq.lambda.Unchecked;
 
 /**
  * Utilities for serializing data and converting between formats.
@@ -34,29 +25,6 @@ import org.jooq.lambda.Unchecked;
  * @author Saúl Vargas (Saul.Vargas@glasgow.ac.uk)
  */
 public class Utils {
-
-//    public static <U, I> FastPreferenceData<U, I> getBinaryData(String path, Parser<U> up, Parser<I> ip, FastUserIndex<U> uIndex, FastItemIndex<I> iIndex) throws IOException {
-//        return SimpleFastPreferenceData.load(lines(Paths.get(path, "ratings.data"))
-//                .map(line -> {
-//                    CharSequence[] tokens = split(line, '\t', 3);
-//                    U user = up.parse(tokens[0]);
-//                    I item = ip.parse(tokens[1]);
-//
-//                    return new PreferenceDataTuple<>(user, item, 1.0);
-//                }), uIndex, iIndex);
-//    }
-//
-//    public static <U, I> FastPreferenceData<U, I> getRatingData(String path, Parser<U> up, Parser<I> ip, FastUserIndex<U> uIndex, FastItemIndex<I> iIndex) throws IOException {
-//        return SimpleFastPreferenceData.load(lines(Paths.get(path, "ratings.data"))
-//                .map(line -> {
-//                    CharSequence[] tokens = split(line, '\t', 4);
-//                    U user = up.parse(tokens[0]);
-//                    I item = ip.parse(tokens[1]);
-//                    double value = parseDouble(tokens[2].toString());
-//
-//                    return new PreferenceDataTuple<>(user, item, value);
-//                }), uIndex, iIndex);
-//    }
 
     /**
      * Serialize object.
@@ -111,86 +79,6 @@ public class Utils {
         try (ObjectInputStream ois = new ObjectInputStream(new GZIPInputStream(in))) {
             return (T) ois.readObject();
         }
-    }
-
-    /**
-     * Saves a PreferenceData instance in two files for user and item preferences, respectively. The format of the user preferences file consists on one list per line, starting with the identifier of the user followed by the identifier-rating pairs of the items related to that. The item preferences file follows the same format by swapping the roles of users and items.
-     *
-     * @param prefData preferences
-     * @param up path to user preferences file
-     * @param ip path to item preferences file
-     * @throws FileNotFoundException one of the files could not be created
-     * @throws IOException other IO error
-     */
-    public static void saveRatingData(FastPreferenceData<?, ?> prefData, String up, String ip) throws FileNotFoundException, IOException {
-        saveRatingData(prefData, new FileOutputStream(up), new FileOutputStream(ip));
-    }
-
-    /**
-     * Saves a PreferenceData instance in two files for user and item preferences, respectively. The format of the user preferences stream consists on one list per line, starting with the identifier of the user followed by the identifier-rating pairs of the items related to that. The item preferences stream follows the same format by swapping the roles of users and items.
-     *
-     * @param prefData preferences
-     * @param uo stream of user preferences
-     * @param io stream of user preferences
-     * @throws IOException when IO error
-     */
-    public static void saveRatingData(FastPreferenceData<?, ?> prefData, OutputStream uo, OutputStream io) throws IOException {
-        BiConsumer<FastPreferenceData<?, ?>, OutputStream> saver = Unchecked.biConsumer((prefs, os) -> {
-            try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os))) {
-                prefs.getUidxWithPreferences().forEach(Unchecked.intConsumer(uidx -> {
-                    String a = prefs.getUidxPreferences(uidx)
-                            .sorted(comparingInt(p -> p.idx))
-                            .map(p -> p.idx + "\t" + (int) p.v)
-                            .collect(joining("\t"));
-
-                    writer.write(uidx + "\t" + a);
-                    writer.newLine();
-                }));
-            }
-        });
-
-        saver.accept(prefData, uo);
-        saver.accept(new TransposedPreferenceData<>(prefData), io);
-    }
-
-    /**
-     * Saves a PreferenceData instance in two files for user and item preferences, respectively. The format of the user preferences file consists on one list per line, starting with the identifier of the user followed by the identifiers of the items related to that. The item preferences file follows the same format by swapping the roles of users and items.
-     *
-     * @param prefData preferences
-     * @param up path to user preferences file
-     * @param ip path to item preferences file
-     * @throws FileNotFoundException one of the files could not be created
-     * @throws IOException other IO error
-     */
-    public static void saveBinaryData(FastPreferenceData<?, ?> prefData, String up, String ip) throws FileNotFoundException, IOException {
-        saveBinaryData(prefData, new FileOutputStream(up), new FileOutputStream(ip));
-    }
-
-    /**
-     * Saves a PreferenceData instance in two files for user and item preferences, respectively. The format of the user preferences stream consists on one list per line, starting with the identifier of the user followed by the identifiers of the items related to that. The item preferences stream follows the same format by swapping the roles of users and items.
-     *
-     * @param prefData preferences
-     * @param uo stream of user preferences
-     * @param io stream of user preferences
-     * @throws IOException when IO error
-     */
-    public static void saveBinaryData(FastPreferenceData<?, ?> prefData, OutputStream uo, OutputStream io) throws IOException {
-        BiConsumer<FastPreferenceData<?, ?>, OutputStream> saver = Unchecked.biConsumer((prefs, os) -> {
-            try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os))) {
-                prefs.getUidxWithPreferences().forEach(Unchecked.intConsumer(uidx -> {
-                    String a = prefs.getUidxPreferences(uidx)
-                            .sorted(comparingInt(p -> p.idx))
-                            .map(p -> Integer.toString(p.idx))
-                            .collect(joining("\t"));
-
-                    writer.write(uidx + "\t" + a);
-                    writer.newLine();
-                }));
-            }
-        });
-
-        saver.accept(prefData, uo);
-        saver.accept(new TransposedPreferenceData<>(prefData), io);
     }
 
 }

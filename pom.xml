@@ -55,7 +55,7 @@
         <dependency>
             <groupId>org.ranksys</groupId>
             <artifactId>RankSys-formats</artifactId>
-            <version>no-files-SNAPSHOT</version>
+            <version>${ranksys.version}</version>
         </dependency>
     </dependencies>
     

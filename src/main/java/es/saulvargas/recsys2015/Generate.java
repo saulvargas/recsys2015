@@ -22,20 +22,13 @@ import java.io.IOException;
 import static es.saulvargas.recsys2015.Conventions.getCodec;
 import static es.saulvargas.recsys2015.Conventions.getFixedLength;
 import static es.saulvargas.recsys2015.Conventions.getPath;
-import static es.saulvargas.recsys2015.Utils.saveBinaryData;
-import static es.saulvargas.recsys2015.Utils.saveRatingData;
 import es.uam.eps.ir.ranksys.fast.IdxObject;
 import es.uam.eps.ir.ranksys.fast.index.FastItemIndex;
 import es.uam.eps.ir.ranksys.fast.index.FastUserIndex;
 import es.uam.eps.ir.ranksys.fast.index.SimpleFastItemIndex;
 import es.uam.eps.ir.ranksys.fast.index.SimpleFastUserIndex;
 import es.uam.eps.ir.ranksys.fast.preference.SimpleFastPreferenceData;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import static java.lang.Integer.parseInt;
 import org.ranksys.compression.preferences.BinaryCODECPreferenceData;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -46,8 +39,10 @@ import org.ranksys.formats.index.UsersReader;
 import org.ranksys.formats.parsing.Parser;
 import static org.ranksys.formats.parsing.Parsers.ip;
 import static org.ranksys.formats.parsing.Parsers.sp;
+import org.ranksys.formats.preference.CompressibleBinaryPreferencesFormat;
 import org.ranksys.formats.preference.SimpleBinaryPreferencesReader;
 import org.ranksys.formats.preference.SimpleRatingPreferencesReader;
+import org.ranksys.formats.preference.CompressibleRatingPreferencesFormat;
 
 /**
  * Program to create compressed preference data and save to compressed binary file.
@@ -108,26 +103,16 @@ public class Generate {
         Function<CODEC<?>[], FastPreferenceData<U, I>> cdf = Unchecked.function(cds -> {
             switch (dataset) {
                 case "msd":
+                    CompressibleBinaryPreferencesFormat binaryFormat = CompressibleBinaryPreferencesFormat.get();
+                    
                     if (!new File(uDataPath).exists() || !new File(iDataPath).exists()) {
                         SimpleFastPreferenceData<U, I> data = SimpleFastPreferenceData.load(SimpleBinaryPreferencesReader.get().read(dataPath, up, ip), users, items);
-                        saveBinaryData(data, uDataPath, iDataPath);
+                        
+                        binaryFormat.write(data, uDataPath, iDataPath);
                     }
 
-                    Function<InputStream, Stream<IdxObject<int[]>>> binaryReader = is -> {
-                        return new BufferedReader(new InputStreamReader(is)).lines().map(line -> {
-                            String[] tokens = line.split("\t");
-                            int len = tokens.length - 1;
-                            int k = parseInt(tokens[0]);
-                            int[] idxs = new int[len];
-                            for (int i = 0; i < len; i++) {
-                                idxs[i] = parseInt(tokens[i + 1]);
-                            }
-                            return new IdxObject<>(k, idxs);
-                        });
-                    };
-
-                    Stream<IdxObject<int[]>> ulb = binaryReader.apply(new FileInputStream(uDataPath));
-                    Stream<IdxObject<int[]>> ilb = binaryReader.apply(new FileInputStream(iDataPath));
+                    Stream<IdxObject<int[]>> ulb = binaryFormat.read(uDataPath);
+                    Stream<IdxObject<int[]>> ilb = binaryFormat.read(iDataPath);
 
                     return new BinaryCODECPreferenceData(ulb, ilb, users, items, cds[0], cds[1]);
                 case "ml1M":
@@ -136,28 +121,16 @@ public class Generate {
                 case "netflix":
                 case "ymusic":
                 default:
+                    CompressibleRatingPreferencesFormat ratingFormat = CompressibleRatingPreferencesFormat.get();
+
                     if (!new File(uDataPath).exists() || !new File(iDataPath).exists()) {
                         SimpleFastPreferenceData<U, I> data = SimpleFastPreferenceData.load(SimpleRatingPreferencesReader.get().read(dataPath, up, ip), users, items);
-                        saveRatingData(data, uDataPath, iDataPath);
+                        
+                        ratingFormat.write(data, uDataPath, iDataPath);
                     }
 
-                    Function<InputStream, Stream<IdxObject<int[][]>>> ratingReader = is -> {
-                        return new BufferedReader(new InputStreamReader(is)).lines().map(line -> {
-                            String[] tokens = line.split("\t");
-                            int len = tokens.length / 2;
-                            int k = parseInt(tokens[0]);
-                            int[] idxs = new int[len];
-                            int[] vs = new int[len];
-                            for (int i = 0; i < len; i++) {
-                                idxs[i] = parseInt(tokens[2 * i + 1]);
-                                vs[i] = parseInt(tokens[2 * i + 2]);
-                            }
-                            return new IdxObject<>(k, new int[][]{idxs, vs});
-                        });
-                    };
-
-                    Stream<IdxObject<int[][]>> ulr = ratingReader.apply(new FileInputStream(uDataPath));
-                    Stream<IdxObject<int[][]>> ilr = ratingReader.apply(new FileInputStream(iDataPath));
+                    Stream<IdxObject<int[][]>> ulr = ratingFormat.read(uDataPath);
+                    Stream<IdxObject<int[][]>> ilr = ratingFormat.read(iDataPath);
 
                     return new RatingCODECPreferenceData(ulr, ilr, users, items, cds[0], cds[1], cds[2]);
             }
