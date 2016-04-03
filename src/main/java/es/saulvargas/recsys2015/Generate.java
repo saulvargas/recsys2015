@@ -22,7 +22,6 @@ import java.io.IOException;
 import static es.saulvargas.recsys2015.Conventions.getCodec;
 import static es.saulvargas.recsys2015.Conventions.getFixedLength;
 import static es.saulvargas.recsys2015.Conventions.getPath;
-import es.uam.eps.ir.ranksys.fast.IdxObject;
 import es.uam.eps.ir.ranksys.fast.index.FastItemIndex;
 import es.uam.eps.ir.ranksys.fast.index.FastUserIndex;
 import es.uam.eps.ir.ranksys.fast.index.SimpleFastItemIndex;
@@ -34,6 +33,7 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 import org.jooq.lambda.Unchecked;
 import org.ranksys.compression.preferences.RatingCODECPreferenceData;
+import org.ranksys.core.util.tuples.Tuple2io;
 import org.ranksys.formats.index.ItemsReader;
 import org.ranksys.formats.index.UsersReader;
 import org.ranksys.formats.parsing.Parser;
@@ -111,8 +111,8 @@ public class Generate {
                         binaryFormat.write(data, uDataPath, iDataPath);
                     }
 
-                    Stream<IdxObject<int[]>> ulb = binaryFormat.read(uDataPath);
-                    Stream<IdxObject<int[]>> ilb = binaryFormat.read(iDataPath);
+                    Stream<Tuple2io<int[]>> ulb = binaryFormat.read(uDataPath);
+                    Stream<Tuple2io<int[]>> ilb = binaryFormat.read(iDataPath);
 
                     return new BinaryCODECPreferenceData(ulb, ilb, users, items, cds[0], cds[1]);
                 case "ml1M":
@@ -129,8 +129,8 @@ public class Generate {
                         ratingFormat.write(data, uDataPath, iDataPath);
                     }
 
-                    Stream<IdxObject<int[][]>> ulr = ratingFormat.read(uDataPath);
-                    Stream<IdxObject<int[][]>> ilr = ratingFormat.read(iDataPath);
+                    Stream<Tuple2io<int[][]>> ulr = ratingFormat.read(uDataPath);
+                    Stream<Tuple2io<int[][]>> ilr = ratingFormat.read(iDataPath);
 
                     return new RatingCODECPreferenceData(ulr, ilr, users, items, cds[0], cds[1], cds[2]);
             }
