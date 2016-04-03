@@ -26,7 +26,6 @@ import es.uam.eps.ir.ranksys.fast.index.SimpleFastItemIndex;
 import es.uam.eps.ir.ranksys.fast.index.SimpleFastUserIndex;
 import es.uam.eps.ir.ranksys.fast.preference.FastPreferenceData;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import static es.saulvargas.recsys2015.Conventions.getCodec;
 import static es.saulvargas.recsys2015.Conventions.getFixedLength;
 import static es.saulvargas.recsys2015.Conventions.getPath;
@@ -38,6 +37,7 @@ import java.io.File;
 import org.ranksys.compression.preferences.BinaryCODECPreferenceData;
 import org.ranksys.compression.preferences.RatingCODECPreferenceData;
 import java.util.function.Function;
+import org.jooq.lambda.Unchecked;
 
 /**
  * Program to create compressed preference data and save to compressed binary file.
@@ -95,30 +95,25 @@ public class Generate {
         String uDataPath = path + "/ratings.u";
         String iDataPath = path + "/ratings.i";
 
-        Function<CODEC<?>[], FastPreferenceData<U, I>> cdf = cds -> {
-            try {
-                switch (dataset) {
-                    case "msd":
-                        if (!new File(uDataPath).exists() || !new File(iDataPath).exists()) {
-                            saveBinaryData(SimpleFastPreferenceData.load(dataPath, up, ip, x -> 1.0, users, items), uDataPath, iDataPath);
-                        }
-                        return BinaryCODECPreferenceData.load(uDataPath, iDataPath, users, items, cds[0], cds[1]);
-                    case "ml1M":
-                    case "ml10M":
-                    case "ml20M":
-                    case "netflix":
-                    case "ymusic":
-                    default:
-                        if (!new File(uDataPath).exists() || !new File(iDataPath).exists()) {
-                            saveRatingData(SimpleFastPreferenceData.load(dataPath, up, ip, ddp, users, items), uDataPath, iDataPath);
-                        }
-                        return RatingCODECPreferenceData.load(uDataPath, iDataPath, users, items, cds[0], cds[1], cds[2]);
-                }
-
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
+        Function<CODEC<?>[], FastPreferenceData<U, I>> cdf = Unchecked.function(cds -> {
+            switch (dataset) {
+                case "msd":
+                    if (!new File(uDataPath).exists() || !new File(iDataPath).exists()) {
+                        saveBinaryData(SimpleFastPreferenceData.load(dataPath, up, ip, x -> 1.0, users, items), uDataPath, iDataPath);
+                    }
+                    return BinaryCODECPreferenceData.load(uDataPath, iDataPath, users, items, cds[0], cds[1]);
+                case "ml1M":
+                case "ml10M":
+                case "ml20M":
+                case "netflix":
+                case "ymusic":
+                default:
+                    if (!new File(uDataPath).exists() || !new File(iDataPath).exists()) {
+                        saveRatingData(SimpleFastPreferenceData.load(dataPath, up, ip, ddp, users, items), uDataPath, iDataPath);
+                    }
+                    return RatingCODECPreferenceData.load(uDataPath, iDataPath, users, items, cds[0], cds[1], cds[2]);
             }
-        };
+        });
 
         long time0 = System.nanoTime();
         int[] lens = getFixedLength(path, dataset);

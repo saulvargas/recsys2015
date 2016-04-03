@@ -12,11 +12,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.UncheckedIOException;
+import static java.util.Comparator.comparingInt;
 import java.util.function.BiConsumer;
 import static java.util.stream.Collectors.joining;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+import org.jooq.lambda.Unchecked;
 
 /**
  * Utilities for serializing data and converting between formats.
@@ -59,7 +60,7 @@ public class Utils {
             oos.writeObject(t);
         }
     }
-    
+
     /**
      * Deserialize object.
      *
@@ -111,24 +112,19 @@ public class Utils {
      * @throws IOException when IO error
      */
     public static void saveRatingData(FastPreferenceData<?, ?> prefData, OutputStream uo, OutputStream io) throws IOException {
-        BiConsumer<FastPreferenceData<?, ?>, OutputStream> saver = (prefs, os) -> {
+        BiConsumer<FastPreferenceData<?, ?>, OutputStream> saver = Unchecked.biConsumer((prefs, os) -> {
             try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os))) {
-                prefs.getUidxWithPreferences().forEach(uidx -> {
+                prefs.getUidxWithPreferences().forEach(Unchecked.intConsumer(uidx -> {
                     String a = prefs.getUidxPreferences(uidx)
-                            .sorted((p1, p2) -> Integer.compare(p1.idx, p2.idx))
+                            .sorted(comparingInt(p -> p.idx))
                             .map(p -> p.idx + "\t" + (int) p.v)
                             .collect(joining("\t"));
-                    try {
-                        writer.write(uidx + "\t" + a);
-                        writer.newLine();
-                    } catch (IOException ex) {
-                        throw new UncheckedIOException(ex);
-                    }
-                });
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
+
+                    writer.write(uidx + "\t" + a);
+                    writer.newLine();
+                }));
             }
-        };
+        });
 
         saver.accept(prefData, uo);
         saver.accept(new TransposedPreferenceData<>(prefData), io);
@@ -156,24 +152,19 @@ public class Utils {
      * @throws IOException when IO error
      */
     public static void saveBinaryData(FastPreferenceData<?, ?> prefData, OutputStream uo, OutputStream io) throws IOException {
-        BiConsumer<FastPreferenceData<?, ?>, OutputStream> saver = (prefs, os) -> {
+        BiConsumer<FastPreferenceData<?, ?>, OutputStream> saver = Unchecked.biConsumer((prefs, os) -> {
             try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os))) {
-                prefs.getUidxWithPreferences().forEach(uidx -> {
+                prefs.getUidxWithPreferences().forEach(Unchecked.intConsumer(uidx -> {
                     String a = prefs.getUidxPreferences(uidx)
-                            .sorted((p1, p2) -> Integer.compare(p1.idx, p2.idx))
+                            .sorted(comparingInt(p -> p.idx))
                             .map(p -> Integer.toString(p.idx))
                             .collect(joining("\t"));
-                    try {
-                        writer.write(uidx + "\t" + a);
-                        writer.newLine();
-                    } catch (IOException ex) {
-                        throw new UncheckedIOException(ex);
-                    }
-                });
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
+
+                    writer.write(uidx + "\t" + a);
+                    writer.newLine();
+                }));
             }
-        };
+        });
 
         saver.accept(prefData, uo);
         saver.accept(new TransposedPreferenceData<>(prefData), io);
