@@ -35,6 +35,29 @@ import org.jooq.lambda.Unchecked;
  */
 public class Utils {
 
+//    public static <U, I> FastPreferenceData<U, I> getBinaryData(String path, Parser<U> up, Parser<I> ip, FastUserIndex<U> uIndex, FastItemIndex<I> iIndex) throws IOException {
+//        return SimpleFastPreferenceData.load(lines(Paths.get(path, "ratings.data"))
+//                .map(line -> {
+//                    CharSequence[] tokens = split(line, '\t', 3);
+//                    U user = up.parse(tokens[0]);
+//                    I item = ip.parse(tokens[1]);
+//
+//                    return new PreferenceDataTuple<>(user, item, 1.0);
+//                }), uIndex, iIndex);
+//    }
+//
+//    public static <U, I> FastPreferenceData<U, I> getRatingData(String path, Parser<U> up, Parser<I> ip, FastUserIndex<U> uIndex, FastItemIndex<I> iIndex) throws IOException {
+//        return SimpleFastPreferenceData.load(lines(Paths.get(path, "ratings.data"))
+//                .map(line -> {
+//                    CharSequence[] tokens = split(line, '\t', 4);
+//                    U user = up.parse(tokens[0]);
+//                    I item = ip.parse(tokens[1]);
+//                    double value = parseDouble(tokens[2].toString());
+//
+//                    return new PreferenceDataTuple<>(user, item, value);
+//                }), uIndex, iIndex);
+//    }
+
     /**
      * Serialize object.
      *
